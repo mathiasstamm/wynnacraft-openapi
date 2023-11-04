@@ -1,18 +1,16 @@
-
-_Work in progress, not all routes are documented. Feel free to contribute._
-
+_Work in progress, not all routes are documented and the ones that are are untested. Feel free to contribute._
 
 # Wynncraft OpenAPI documentation
 
-OpenAPI definitions according to [Wynncraft's Official Documentation](https://documentation.wynncraft.com/)
+Third-Party OpenAPI / Swagger definitions according to [Wynncraft's Official Documentation](https://documentation.wynncraft.com/)
 
-## Progress
+## Progress / Roadmap
 
 ### Basic OpenAPI docs
-- [-] Player module
+- [ ] Player module
     - [x] Implemented
     - [ ] Tested
-- [-] Guild module
+- [ ] Guild module
     - [x] Implemented
     - [ ] Tested
 - [ ] Item module
