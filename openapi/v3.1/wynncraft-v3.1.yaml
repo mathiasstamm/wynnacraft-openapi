@@ -61,6 +61,8 @@ tags:
       description: News module documentation
       url: https://documentation.wynncraft.com/docs/modules/news.html
 
+security: []
+
 paths:
 
   ################################################
