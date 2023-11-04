@@ -549,7 +549,6 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PlayerCharacter'
-          nullable: true
         publicProfile:
           type: boolean
 
@@ -617,7 +616,6 @@ components:
             type: boolean
           server:
             type: string
-            nullable: true
           contributed:
             type: integer
           guildRank:
