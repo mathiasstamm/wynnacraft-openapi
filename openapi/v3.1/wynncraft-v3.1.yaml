@@ -1,0 +1,662 @@
+openapi: 3.0.3
+
+info:
+  title: Wynncraft Public API
+  version: "3.1"
+  description: The Wynncraft Public API is a read-only API which allows you to access various information about Wynncraft. This includes, but is not limited to, player statistics, server status, and guild information.
+  contact:
+    url: https://discord.com/invite/nUFD9xX
+    name: Wynncraft Developer Discord
+externalDocs:
+  description: Wynncraft Public API Documentation
+  url: https://documentation.wynncraft.com/
+servers:
+  - url: https://api.wynncraft.com/v3
+    description: Wynncraft Public API v3.1
+
+tags:
+  - name: Player module
+    description: This module manages player stats and online player count & list.
+    externalDocs:
+      description: Player module documentation
+      url: https://documentation.wynncraft.com/docs/modules/player.html
+  - name: Guild module
+    description: This module manages territory lists and guild info & lists.
+    externalDocs:
+      description: Guild module documentation
+      url: https://documentation.wynncraft.com/docs/modules/guild.html
+  - name: Item module
+    description: This module manages item listing, metadata and search.
+    externalDocs:
+      description: Item module documentation
+      url: https://documentation.wynncraft.com/docs/modules/item.html
+  - name: Leaderboard module
+    description: This module manages leaderboards
+    externalDocs:
+      description: Leaderboard module documentation
+      url: https://documentation.wynncraft.com/docs/modules/leaderboard.html
+  - name: Ability module
+    description: Ability information
+    externalDocs:
+      description: Ability module documentation
+      url: https://documentation.wynncraft.com/docs/modules/ability.html
+  - name: Map module
+    description: Map information
+    externalDocs:
+      description: Map module documentation
+      url: https://documentation.wynncraft.com/docs/modules/map.html
+  - name: Search module
+    description: Search
+    externalDocs:
+      description: Search module documentation
+      url: https://documentation.wynncraft.com/docs/modules/search.html
+  - name: Classes module
+    description: Classes module
+    externalDocs:
+      description: Classes module documentation
+      url: https://documentation.wynncraft.com/docs/modules/classes.html
+  - name: News module
+    description: News module
+    externalDocs:
+      description: News module documentation
+      url: https://documentation.wynncraft.com/docs/modules/news.html
+
+paths:
+
+  ################################################
+  # Player module
+  ################################################
+
+  /player/{usernameOrUuid}:
+    get:
+      tags:
+        - Player module
+      summary: Player stats
+      description: This endpoint may return "full" and "main" player stats.
+      operationId: getPlayerStats
+      parameters:
+        - $ref: '#/components/parameters/usernameOrUuid'
+        - $ref: '#/components/parameters/fullResult'
+      responses:
+        "200":
+          description: Player stats
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/PlayerStats"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  /player/{usernameOrUuid}/characters:
+    get:
+      tags:
+        - Player module
+      summary: Player characters
+      description: Retrieves a player characters
+      operationId: getCharacterList
+      parameters:
+        - $ref: '#/components/parameters/usernameOrUuid'
+      responses:
+        "200":
+          description: Player characters
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/BasePlayerCharacter"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  /player/{usernameOrUuid}/characters/{characterUuid}:
+    get: 
+      tags:
+        - Player module
+      summary: Player character data
+      description: Responds with a player's character
+      operationId: getCharacterData
+      parameters:
+        - $ref: '#/components/parameters/usernameOrUuid'
+        - $ref: '#/components/parameters/characterUuid'
+      responses:
+        "200":
+          description: Player character
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/PlayerCharacter"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+
+  /player/{usernameOrUuid}/characters/{characterUuid}/abilities:
+    get:
+      tags:
+        - Player module
+      summary: Player character ability map
+      description: Responds with the ability map of a player's specific character
+      operationId: getCharacterAbilityMap
+      parameters:
+        - $ref: '#/components/parameters/usernameOrUuid'
+        - $ref: '#/components/parameters/characterUuid'
+      responses:
+        "200":
+          description: Player character abilities
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/PlayerCharacterAbilityMap"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  /player:
+    get:
+      tags:
+        - Player module
+      summary: Online player list
+      description: Responds with the online player count and list
+      operationId: getOnlinePlayerList
+      responses:
+        "200":
+          description: Online player count
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/OnlinePlayerList"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  ################################################
+  # Guild module
+  ################################################
+
+  /guild/{guildName}:
+    get:
+      tags:
+        - Guild module
+      summary: Get guild by name
+      description: Responds with a guild's information (by name)
+      operationId: getGuildByName
+      parameters:
+        - $ref: '#/components/parameters/guildName'
+      responses:
+        "200":
+          description: Guild info
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GuildInfo"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  /guild/prefix/{guildPrefix}:
+    get:
+      tags:
+        - Guild module
+      summary: Get guild by prefix
+      description: Responds with a guild's information (by prefix)
+      operationId: getGuildByPrefix
+      parameters:
+        - $ref: '#/components/parameters/guildPrefix'
+      responses:
+        "200":
+          description: Guild info
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GuildInfo"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+  /guild/list/guild:
+    get:
+      tags:
+        - Guild module
+      summary: Guild list
+      description: Responds with all wynncraft guilds
+      operationId: getGuildList
+      responses:
+        "200":
+          description: Guild list
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GuildListItem"
+          headers:
+            cache-control:
+              $ref: '#/components/headers/cache-control'
+            date:
+              $ref: '#/components/headers/date'
+            expires:
+              $ref: '#/components/headers/expires'
+            version:
+              $ref: '#/components/headers/version'
+
+components:
+  headers:
+    cache-control:
+      description: TTL of the current route in seconds
+      schema:
+        type: string
+        example: max-age=60
+    date:
+      description: Date of the current request
+      schema:
+        type: string
+        example: Thu, 01 Jan 1970 00:00:00 GMT
+    expires:
+      description: If the route is cached, this will be the date when the cache will be purged
+      schema:
+        type: string
+        example: Thu, 01 Jan 1970 00:01:00 GMT
+    version:
+      description: The version of the API
+      schema:
+        type: string
+        example: v3.1
+
+  parameters:
+    fullResult:
+      name: fullResult
+      in: query
+      description: Whether to return the full result or not
+      schema:
+        type: boolean
+        default: false
+
+    usernameOrUuid:
+      name: usernameOrUuid
+      in: path
+      description: The player's username or UUID
+      required: true
+      schema:
+        oneOf:
+          - type: string
+            format: uuid
+    characterUuid:
+      name: characterUuid
+      in: path
+      description: The character's UUID
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    guildName:
+      name: guildName
+      in: path
+      description: The guild's name
+      required: true
+      schema:
+        type: string
+    guildPrefix:
+      name: guildPrefix
+      in: path
+      description: The guild's prefix
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    PlayerLegacyRankColour:
+      type: object
+      properties:
+        main:
+          type: string
+        sub:
+          type: string
+    PlayerGuild:
+      type: object
+      properties:
+        name:
+          type: string
+        prefix:
+          type: string
+        rank:
+          type: string
+        rankStars:
+          type: string
+    PlayerGlobalData:
+      type: object
+      properties:
+        wars:
+          type: integer
+        totalLevels:
+          type: integer
+        killedMobs:
+          type: integer
+        chestsFound:
+          type: integer
+        dungeons:
+          type: object
+          additionalProperties:
+            type: integer
+        raids:
+          type: object
+          additionalProperties:
+            type: integer
+        completedQuests:
+          type: integer
+        pvp:
+          $ref: '#/components/schemas/PvP'
+    PvP:
+      type: object
+      properties:
+        kills:
+          type: integer
+        deaths:
+          type: integer
+    PlayerForumLink:
+      type: object
+      properties:
+        forumUsername:
+          type: string
+        forumId:
+          type: integer
+        gameUsername:
+          type: string
+    PlayerRanking:
+      type: object
+      additionalProperties:
+        type: integer
+    BasePlayerCharacter:
+      type: object
+      properties:
+        type:
+          type: string
+        nickname:
+          type: string
+        level:
+          type: integer
+        xp:
+          type: integer
+        xpPercent:
+          type: integer
+        totalLevel:
+          type: integer
+        gamemode:
+          type: array
+          items:
+            type: string
+    PlayerCharacterDungeons:
+      type: object
+      properties:
+        total:
+          type: integer
+        list:
+          type: object
+          additionalProperties:
+            type: integer
+    PlayerCharacterRaids:
+      type: object
+      properties:
+        total:
+          type: integer
+        list:
+          type: object
+          additionalProperties:
+            type: integer
+    PlayerCharacter:
+      allOf:
+        - $ref: '#/components/schemas/BasePlayerCharacter'
+        - type: object
+          properties:
+            wars:
+              type: integer
+            playtime:
+              type: integer
+            mobsKilled:
+              type: integer
+            chestsFound:
+              type: integer
+            blocksWalked:
+              type: integer
+            itemsIdentified:
+              type: integer
+            logins:
+              type: integer
+            death:
+              type: integer
+            discoveries:
+              type: integer
+            pvp:
+              $ref: '#/components/schemas/PvP'
+            skillPoints:
+              type: object
+              properties:
+                strength:
+                  type: integer
+                dexterity:
+                  type: integer
+                intelligence:
+                  type: integer
+                defence:
+                  type: integer
+                agility:
+                  type: integer
+            professions:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  level:
+                    type: integer
+                  xpPercent:
+                    type: integer
+            dungeons:
+              $ref: '#/components/schemas/PlayerCharacterDungeons'
+            raids:
+              $ref: '#/components/schemas/PlayerCharacterRaids'
+            quests:
+              type: array
+              items:
+                type: string
+    PlayerCharacterAbilityMap:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: integer
+    PlayerStats:
+      type: object
+      properties:
+        username:
+          type: string
+        online:
+          type: boolean
+        server:
+          type: string
+        uuid:
+          type: string
+        rank:
+          type: string
+        rankBadge:
+          type: string
+        legacyRankColour:
+          $ref: '#/components/schemas/PlayerLegacyRankColour'
+        shortenedRank:
+          type: string
+        supportRank:
+          type: string
+        firstJoin:
+          type: string
+        lastJoin:
+          type: string
+        playtime:
+          type: integer
+        guild:
+          $ref: '#/components/schemas/PlayerGuild'
+        globalData:
+          $ref: '#/components/schemas/PlayerGlobalData'
+        forumLink:
+          $ref: '#/components/schemas/PlayerForumLink'
+        ranking:
+          $ref: '#/components/schemas/PlayerRanking'
+        characters:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PlayerCharacter'
+          nullable: true
+        publicProfile:
+          type: boolean
+
+    OnlinePlayerList:
+      type: object
+      properties:
+        onlinePlayers:
+          type: integer
+        players:
+          type: object
+          additionalProperties:
+            type: string
+
+    GuildInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        prefix:
+          type: string
+        level:
+          type: integer
+        xpPercent:
+          type: integer
+        territories:
+          type: integer
+        wars:
+          type: integer
+        created:
+          type: string
+        members:
+          type: object
+          properties:
+            total:
+              type: integer
+            owner:
+              $ref: '#/components/schemas/GuildMember'
+            chief:
+              $ref: '#/components/schemas/GuildMember'
+            strategist:
+              $ref: '#/components/schemas/GuildMember'
+            captain:
+              $ref: '#/components/schemas/GuildMember'
+            recruiter:
+              $ref: '#/components/schemas/GuildMember'
+            recruit:
+              $ref: '#/components/schemas/GuildMember'
+        online:
+          type: integer
+        banner:
+          $ref: '#/components/schemas/GuildBanner'
+        seasonRanks:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GuildSeasonRank'
+
+    GuildMember:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          uuid:
+            type: string
+          online:
+            type: boolean
+          server:
+            type: string
+            nullable: true
+          contributed:
+            type: integer
+          guildRank:
+            type: integer
+          joined:
+            type: string
+
+    GuildBanner:
+      type: object
+      properties:
+        base:
+          type: string
+        tier:
+          type: integer
+        structure:
+          type: string
+        layers:
+          type: array
+          items:
+            $ref: '#/components/schemas/GuildBannerLayer'
+
+    GuildBannerLayer:
+      type: object
+      properties:
+        colour:
+          type: string
+        pattern:
+          type: string
+
+    GuildSeasonRank:
+      type: object
+      properties:
+        rating:
+          type: integer
+        finalTerritories:
+          type: integer
+
+    GuildListItem:
+      type: object
+      properties:
+        name:
+            type: string
+        prefix:
+            type: string
